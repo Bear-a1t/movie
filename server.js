@@ -1,13 +1,12 @@
 import express from "express";
 import fetch from "node-fetch";
 import path from "path";
-import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Enable CORS for all routes
-app.use(cors());
+//app.use(cors());
 
 // Serve index.html from the same directory
 app.get("/", (req, res) => {
