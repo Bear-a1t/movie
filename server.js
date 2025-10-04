@@ -1,11 +1,11 @@
 import express from "express";
-import fetch from "node-fetch";
 import path from "path";
+import fs from "fs";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve index.html from the same directory
+// Serve index.html from the root directory
 app.get("/", (req, res) => {
   res.sendFile(path.join(process.cwd(), "index.html"));
 });
@@ -39,10 +39,11 @@ app.get("/movie/embed", async (req, res) => {
     const contentType = remoteRes.headers.get("content-type") || "text/html";
     const body = await remoteRes.text();
 
-    res.removeHeader("X-Frame-Options");
-    res.set("Content-Type", contentType);
-    res.set("Content-Security-Policy", "frame-ancestors 'self';");
-    res.set("Cache-Control", "no-store");
+    res.set({
+      "Content-Type": contentType,
+      "Content-Security-Policy": "frame-ancestors 'self';",
+      "Cache-Control": "no-store"
+    });
 
     res.send(body);
   } catch (err) {
@@ -50,11 +51,19 @@ app.get("/movie/embed", async (req, res) => {
     res.status(502).send("Failed to proxy embed page.");
   }
 });
+
+// Serve movies.json via API
 app.get("/api/movies", (req, res) => {
   const filePath = path.join(process.cwd(), "movies.json");
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const movies = JSON.parse(raw);
-  res.json(movies);
+
+  try {
+    const raw = fs.readFileSync(filePath, "utf-8");
+    const movies = JSON.parse(raw);
+    res.json(movies);
+  } catch (err) {
+    console.error("Error reading movies.json:", err);
+    res.status(500).send("Failed to read movies data.");
+  }
 });
 
 app.listen(PORT, () => {
