@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MovieStream — PG-13</title>
+<title>MovieStream</title>
 <style>
   /* Clean, minimal Catppuccin-inspired (mocha) theme */
   *{box-sizing:border-box;margin:0;padding:0}
@@ -133,7 +133,7 @@
       return;
     }
     // set iframe to proxied endpoint on our server
-    player.src = `/proxy/embed/${id}`;
+    player.src = `/movie/embed/?tmdb=${id}`;
     modal.style.display = 'flex';
     // lock scroll
     document.body.style.overflow = 'hidden';
