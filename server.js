@@ -1,33 +1,17 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs");
-const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args));
-const app = express();
-const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0';
+app.get("/proxy/embed", async (req, res) => {
+  const { type, tmdb } = req.query;
 
-app.use(express.json());
-app.use(express.static(__dirname));
-
-app.get("/api/movies", (req, res) => {
-  try {
-    const movies = JSON.parse(fs.readFileSync(path.join(__dirname, "movies.json"), "utf-8"));
-    res.json(movies);
-  } catch (err) {
-    console.error("Failed to read movies.json", err);
-    res.status(500).json({ error: "Failed to load movies" });
+  if (!type || !tmdb) {
+    return res.status(400).send("Missing type or tmdb query parameters.");
   }
-});
 
-app.get("/proxy/embed/:id", async (req, res) => {
-  const id = req.params.id;
-  const target = `https://vidsrc.to/embed/${id}`;
-  
+  const target = `https://vidsrc.net/embed/${type}?tmdb=${tmdb}`;
+
   try {
     const remoteRes = await fetch(target, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "https://vidsrc.to/"
+        "Referer": "https://vidsrc.net/"
       }
     });
 
@@ -48,12 +32,4 @@ app.get("/proxy/embed/:id", async (req, res) => {
     console.error("Proxy error:", err);
     res.status(502).send("Failed to proxy embed page.");
   }
-});
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.listen(PORT, HOST, () => {
-  console.log(`Server running at http://${HOST}:${PORT}`);
 });
