@@ -21,7 +21,7 @@ app.get("/api/movies", (req, res) => {
 
 app.get("/proxy/embed/:id", async (req, res) => {
   const id = req.params.id;
-  const target = `https://vidsrc.to/embed/movie/${id}`;
+  const target = `https://vidsrc.to/embed/${id}`;
   
   try {
     const remoteRes = await fetch(target, {
