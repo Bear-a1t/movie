@@ -5,9 +5,6 @@ import path from "path";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all routes
-//app.use(cors());
-
 // Serve index.html from the same directory
 app.get("/", (req, res) => {
   res.sendFile(path.join(process.cwd(), "index.html"));
@@ -29,7 +26,6 @@ app.get("/movie/embed", async (req, res) => {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate, br",
         "Referer": "https://vidsrc.net/",
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1"
