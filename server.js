@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import fetch from "node-fetch";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,36 +26,13 @@ app.get("/api/movies", (req, res) => {
   }
 });
 
-// Movie embed proxy
-app.get("/movie/embed", async (req, res) => {
+// Movie embed via MultiEmbed (TMDB only)
+app.get("/movie/embed", (req, res) => {
   const { tmdb } = req.query;
   if (!tmdb) return res.status(400).send("Missing tmdb query parameter.");
 
-  const target = `https://vidsrc.net/embed/movie?tmdb=${tmdb}`;
-
-  try {
-    const remoteRes = await fetch(target, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept": "text/html",
-        "Referer": "https://vidsrc.net/"
-      }
-    });
-
-    if (!remoteRes.ok) return res.status(remoteRes.status).send("Remote server error");
-
-    const body = await remoteRes.text();
-
-    res.set({
-      "Content-Type": "text/html",
-      "Cache-Control": "no-store"
-    });
-
-    res.send(body);
-  } catch (err) {
-    console.error("Proxy error:", err);
-    res.status(502).send("Failed to proxy embed page.");
-  }
+  const url = `https://multiembed.mov/?video_id=${tmdb}&tmdb=1`;
+  res.redirect(url);
 });
 
 app.listen(PORT, () => {
