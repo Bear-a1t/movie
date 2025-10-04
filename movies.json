@@ -2,7 +2,7 @@
   {
     "title": "Super Mario Bros",
     "year": "1993",
-    "poster": "https://via.placeholder.com/300x450?text=Super+Mario+Bros",
-    "embed": "https://vidsrc.to/embed/movie/502356"
+    "poster": "https://picsum.photos/300/450?random=502356",
+    "embed": "https://vidsrc.net/embed/movie?tmdb=502356"
   }
 ]
