@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MovieStream — PG-13</title>
+<style>
+  /* Clean, minimal Catppuccin-inspired (mocha) theme */
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter, 'Segoe UI', system-ui, -apple-system, Arial; background:#1e1e2e;color:#c6d0f5;min-height:100vh}
+  header{background:#2a273f;padding:18px 20px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px}
+  .brand{display:flex;flex-direction:column}
+  .brand h1{font-size:18px;color:#f4b8e4;margin:0}
+  .search { margin-left:auto; display:flex; gap:0; align-items:center;}
+  .search input{padding:10px 12px;border-radius:6px 0 0 6px;border:none;background:#3c3a4d;color:inherit;width:320px}
+  .search button{padding:10px 14px;border-radius:0 6px 6px 0;border:none;background:#f4b8e4;color:#1e1e2e;font-weight:600;cursor:pointer}
+  main{padding:20px}
+  h2{color:#f4b8e4;margin:12px 0}
+  .movies{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+  .card{background:#2a273f;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,0.4);transition:transform .12s ease,box-shadow .12s ease}
+  .card:hover{transform:translateY(-4px);box-shadow:0 8px 18px rgba(0,0,0,0.6)}
+  .poster{width:100%;height:210px;object-fit:cover;display:block;background:#333}
+  .meta{padding:10px;text-align:center}
+  .meta h3{font-size:13px;color:#f4b8e4;margin-bottom:6px}
+  .meta p{font-size:12px;color:#b5bfe2;margin:0}
+  /* modal player */
+  #modal{display:none;position:fixed;inset:0;background:rgba(10,10,12,0.85);display:flex;align-items:center;justify-content:center;z-index:40;padding:20px}
+  #modal .box{width:90%;max-width:1100px;background:transparent;border-radius:10px;display:flex;flex-direction:column;align-items:center}
+  #player{width:100%;height:62vh;border-radius:8px;border:0;background:#000}
+  .close{margin-top:12px;padding:10px 16px;border-radius:8px;border:none;background:#f4b8e4;color:#1e1e2e;font-weight:600;cursor:pointer}
+  @media(min-width:1100px){ .poster{height:260px} }
+  @media(max-width:540px){ .search input{width:150px}; .poster{height:160px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>MovieStream</h1>
+    <small style="color:#b5bfe2;font-size:12px">PG‑13 & family — local list</small>
+  </div>
+
+  <div class="search" role="search" aria-label="Search movies">
+    <input id="q" placeholder="Search movies..." type="search" />
+    <button id="searchBtn">Search</button>
+  </div>
+</header>
+
+<main>
+  <section>
+    <h2>Trending</h2>
+    <div id="trending" class="movies" aria-live="polite"></div>
+  </section>
+
+  <section style="margin-top:22px">
+    <h2>All Movies</h2>
+    <div id="all" class="movies"></div>
+  </section>
+</main>
+
+<!-- Modal player -->
+<div id="modal" role="dialog" aria-modal="true">
+  <div class="box" role="document">
+    <iframe id="player" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    <button class="close" id="closeBtn">Close</button>
+  </div>
+</div>
+
+<script>
+(async function(){
+  const moviesRes = await fetch('/api/movies');
+  const movies = await moviesRes.json();
+
+  const trendingEl = document.getElementById('trending');
+  const allEl = document.getElementById('all');
+
+  function mkCard(m){
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.tabIndex = 0;
+    d.innerHTML = `
+      <img class="poster" loading="lazy" src="${m.poster}" alt="${m.title} poster" />
+      <div class="meta"><h3>${m.title}</h3><p>${m.year}</p></div>
+    `;
+    d.addEventListener('click', ()=> openPlayer(m.embed));
+    d.addEventListener('keypress', (e)=> { if(e.key === 'Enter') openPlayer(m.embed) });
+    return d;
+  }
+
+  // trending — first 6
+  (movies.slice(0,6)).forEach(m => trendingEl.appendChild(mkCard(m)));
+  // all
+  movies.forEach(m => allEl.appendChild(mkCard(m)));
+
+  // search
+  const q = document.getElementById('q');
+  const searchBtn = document.getElementById('searchBtn');
+  function doSearch(){
+    const term = q.value.trim().toLowerCase();
+    if(!term){
+      // reset
+      allEl.innerHTML = '';
+      movies.forEach(m => allEl.appendChild(mkCard(m)));
+      return;
+    }
+    const filtered = movies.filter(m => (m.title + ' ' + (m.year||'')).toLowerCase().includes(term));
+    allEl.innerHTML = '';
+    if(filtered.length === 0){
+      allEl.innerHTML = '<p style="color:#b5bfe2;padding:12px">No results</p>';
+    } else {
+      filtered.forEach(m => allEl.appendChild(mkCard(m)));
+    }
+  }
+  searchBtn.addEventListener('click', doSearch);
+  q.addEventListener('keydown', (e)=> { if(e.key === 'Enter') doSearch(); });
+
+  // modal player using proxied path
+  const modal = document.getElementById('modal');
+  const player = document.getElementById('player');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function extractImdbId(embedUrl){
+    // embedUrl like https://vidsrc.to/embed/movie/tt1375666
+    try {
+      const parts = embedUrl.split('/');
+      return parts[parts.length-1];
+    } catch { return null; }
+  }
+
+  function openPlayer(embedUrl){
+    const id = extractImdbId(embedUrl);
+    if(!id){
+      alert('Invalid embed URL');
+      return;
+    }
+    // set iframe to proxied endpoint on our server
+    player.src = `/proxy/embed/${id}`;
+    modal.style.display = 'flex';
+    // lock scroll
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePlayer(){
+    player.src = '';
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closePlayer);
+  modal.addEventListener('click', (e)=> { if(e.target === modal) closePlayer(); });
+
+})();
+</script>
+</body>
+</html>
