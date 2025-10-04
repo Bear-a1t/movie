@@ -50,6 +50,12 @@ app.get("/movie/embed", async (req, res) => {
     res.status(502).send("Failed to proxy embed page.");
   }
 });
+app.get("/api/movies", (req, res) => {
+  const filePath = path.join(process.cwd(), "movies.json");
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const movies = JSON.parse(raw);
+  res.json(movies);
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
