@@ -1,11 +1,11 @@
-app.get("/proxy/embed", async (req, res) => {
-  const { type, tmdb } = req.query;
+app.get("/movie/embed", async (req, res) => {
+  const { tmdb } = req.query;
 
-  if (!type || !tmdb) {
-    return res.status(400).send("Missing type or tmdb query parameters.");
+  if (!tmdb) {
+    return res.status(400).send(" tmdb query parameters.");
   }
 
-  const target = `https://vidsrc.net/embed/${type}?tmdb=${tmdb}`;
+  const target = `https://vidsrc.net/embed/movie?tmdb=${tmdb}`;
 
   try {
     const remoteRes = await fetch(target, {
