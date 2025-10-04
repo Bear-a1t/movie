@@ -1,17 +1,8 @@
 [
-  {"title":"Inception","year":"2010","poster":"https://via.placeholder.com/300x450?text=Inception","embed":"https://vidsrc.to/embed/tt1375666"},
-  {"title":"Interstellar","year":"2014","poster":"https://via.placeholder.com/300x450?text=Interstellar","embed":"https://vidsrc.to/embed/tt0816692"},
-  {"title":"The Matrix","year":"1999","poster":"https://via.placeholder.com/300x450?text=The+Matrix","embed":"https://vidsrc.to/embed/tt0133093"},
-  {"title":"Avatar","year":"2009","poster":"https://via.placeholder.com/300x450?text=Avatar","embed":"https://vidsrc.to/embed/movie/tt0499549"},
-  {"title":"The Dark Knight","year":"2008","poster":"https://via.placeholder.com/300x450?text=The+Dark+Knight","embed":"https://vidsrc.to/embed/movie/tt0468569"},
-  {"title":"Titanic","year":"1997","poster":"https://via.placeholder.com/300x450?text=Titanic","embed":"https://vidsrc.to/embed/movie/tt0120338"},
-  {"title":"Forrest Gump","year":"1994","poster":"https://via.placeholder.com/300x450?text=Forrest+Gump","embed":"https://vidsrc.to/embed/movie/tt0109830"},
-  {"title":"Shrek","year":"2001","poster":"https://via.placeholder.com/300x450?text=Shrek","embed":"https://vidsrc.to/embed/movie/tt0126029"},
-  {"title":"Toy Story","year":"1995","poster":"https://via.placeholder.com/300x450?text=Toy+Story","embed":"https://vidsrc.to/embed/movie/tt0114709"},
-  {"title":"The Lion King","year":"1994","poster":"https://via.placeholder.com/300x450?text=Lion+King","embed":"https://vidsrc.to/embed/movie/tt0110357"},
-  {"title":"Five Nights at Freddy's","year":"2023","poster":"https://via.placeholder.com/300x450?text=FNAF","embed":"https://vidsrc.to/embed/movie/tt2453894"},
-  {"title":"Spider-Man: Across the Spider-Verse","year":"2023","poster":"https://via.placeholder.com/300x450?text=Spider-Man+Across+The+Spider-Verse","embed":"https://vidsrc.to/embed/movie/tt9362722"},
-  {"title":"Guardians of the Galaxy Vol. 3","year":"2023","poster":"https://via.placeholder.com/300x450?text=Guardians+Vol3","embed":"https://vidsrc.to/embed/movie/tt6791350"},
-  {"title":"Barbie","year":"2023","poster":"https://via.placeholder.com/300x450?text=Barbie","embed":"https://vidsrc.to/embed/movie/tt1517268"},
-  {"title":"Oppenheimer","year":"2023","poster":"https://via.placeholder.com/300x450?text=Oppenheimer","embed":"https://vidsrc.to/embed/movie/tt15398776"}
+  {
+    "title": "Super Mario Bros",
+    "year": "1993",
+    "poster": "https://via.placeholder.com/300x450?text=Super+Mario+Bros",
+    "embed": "https://vidsrc.to/embed/movie/502356"
+  }
 ]
